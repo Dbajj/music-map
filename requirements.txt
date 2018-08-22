@@ -1,7 +1,15 @@
+aniso8601==3.0.2
+click==6.7
+Flask==1.0.2
+Flask-RESTful==0.3.6
+itsdangerous==0.24
+Jinja2==2.10
 lxml==4.2.4
+MarkupSafe==1.0
 neo4j-driver==1.6.1
 neotime==1.0.0
 psycopg2==2.7.5
 pytz==2018.5
 six==1.11.0
 SQLAlchemy==1.2.10
+Werkzeug==0.14.1
