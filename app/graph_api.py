@@ -1,14 +1,10 @@
-from neo4j.v1 import GraphDatabase
+from py2neo import Graph, Node, Relationship
 import pdb
+
 
 class GraphAdapter():
     def __init__(self, uri, user, password):
-        self._driver = GraphDatabase.driver(uri)
-
-
-
-    def close(self):
-        self._driver.close()
+        self._graph = Graph(uri)
 
 
     def get_artist_by_id(self,artist_id):

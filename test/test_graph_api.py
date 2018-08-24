@@ -4,8 +4,12 @@ from app import graph_api
 import docker
 import os
 import time
+import csv
+from py2neo import Node, Relationship, NodeMatcher
 
 TEST_URI = "bolt://127.0.0.1:7688"
+TESTFILE_URI_NODE = "data/test_csv/test_artist_simple.csv"
+TESTFILE_URI_RELATION = "data/test_csv/test_release_simple.csv"
 SECOND = 1000000000
 CHECKTIMEOUT = 1
 
@@ -42,10 +46,45 @@ def test_api():
 
 
     api = graph_api.GraphAdapter(TEST_URI, "neo4j", "***REMOVED***")
+    load_test_nodes(api, TESTFILE_URI_NODE)
+    load_test_relations(api, TESTFILE_URI_RELATION)
     yield api
-    api.close()
-    container.kill()
+    clear_nodes(api)
     
+
+def load_test_nodes(api, uri):
+    working_dir = os.getcwd()
+    with open(f'{working_dir}/{TESTFILE_URI_NODE}', 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        graph = api._graph
+        tx = graph.begin()
+        for entry in reader:
+            tx.create(Node("Artist",artistId=entry[0],name=entry[1]))
+        tx.commit()
+
+def load_test_relations(api, uri):
+    working_dir = os.getcwd()
+    with open(f'{working_dir}/{TESTFILE_URI_RELATION}', 'r') as csvfile:
+        reader = csv.reader(csvfile) 
+        graph = api._graph
+        tx = graph.begin()
+        matcher = NodeMatcher(graph)
+        for entry in reader:
+            first = matcher.match(artistId=entry[1]).first()
+            second = matcher.match(artistId=entry[2]).first()
+            tx.create(Relationship(first,entry[3],second,masterId=entry[0]))
+        tx.commit()
+
+
+    
+
+        
+
+def clear_nodes(api):
+    api._graph.run("MATCH(n) DETACH DELETE n")
+
+
+
 
 def test_get_artist_by_id(test_api):
     test_api.get_artist_by_id("123451")
