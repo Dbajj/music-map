@@ -1,4 +1,4 @@
-from py2neo import Graph, Node, Relationship
+from py2neo import Graph, Node, Relationship, NodeMatcher
 import pdb
 
 
@@ -12,6 +12,10 @@ class GraphAdapter():
         Return artist object from database corresponding to given id
         if no artist found, returns None
         """
+        print("WE CALLING NOW")
+        matcher = NodeMatcher(self._graph)
+        artist = matcher.match(artist_id).first()
+        return artist
             #artist_node = result[0]['n']
             #return Artist(artist_node.get('name'), artist_node.get('artistId'))
 
