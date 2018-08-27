@@ -1,6 +1,6 @@
 import pdb
 import pytest
-from app import graph_api
+from app import adapter
 import docker
 import os
 import time
