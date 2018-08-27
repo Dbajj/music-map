@@ -1,25 +1,33 @@
 
 from flask import Flask
-from flask_restful import reqparse, abort, Api, Resource
-from neo4j.v1 import GraphDatabase
+from flask_restful import reqparse, abort, Api, Resource, fields, marshal_with
+from app.adapter import GraphAdapter
+import pdb
 
 GRAPH_URI = "bolt://127.0.0.1:7687"
 
 app = Flask(__name__)
 api = Api(app)
 
-graph_driver = GraphDatabase.driver(GRAPH_URI, auth=("neo4j", "***REMOVED***"))
+graph_adapter = GraphAdapter(GRAPH_URI,"neo4j","***REMOVED***")
 
-class Node(Resource):
-    def get(self, node_id):
-        with graph_driver.session() as session:
-            return session.run("MATCH(n:Artist {})")
+resource_fields = {
+    'name': fields.String,
+    'id': fields.String
+}
 
-##
-## Actually setup the Api resource routing here
-##
-api.add_resource(TodoList, '/todos')
-api.add_resource(Todo, '/todos/<todo_id>')
+
+class ArtistApi(Resource):
+    @marshal_with(resource_fields)
+    def get(self, artist_id):
+        result = graph_adapter.get_artist_by_id(artist_id);
+        if result is None:
+            abort(404, message="Artist id {} doesn't exist".format(artist_id))
+        else:
+            return result
+
+
+api.add_resource(ArtistApi,'/artist/<string:artist_id>')
 
 
 if __name__ == '__main__':
