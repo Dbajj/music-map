@@ -31,7 +31,7 @@ class TestGraphAdapter(object):
         result = api.get_artist_by_id('123412')
 
         assert result is None
-        app.adapter.NodeMatcher.return_value.match.assert_called_with("123412")
+        app.adapter.NodeMatcher.return_value.match.assert_called_with('Artist',artistId="123412")
 
     def test_get_artist_by_id_present(self,mocker):
         mocker.patch('app.adapter.Graph')
@@ -43,5 +43,17 @@ class TestGraphAdapter(object):
         result = api.get_artist_by_id('123412')
 
         assert result == app.adapter.Artist("Eminem",'123412')
-        app.adapter.NodeMatcher.return_value.match.assert_called_with("123412")
+        app.adapter.NodeMatcher.return_value.match.assert_called_with('Artist',artistId="123412")
+
+    # TODO Complete this with appropriate return type from py2neo and appropriate
+    # asserts
+    def test_get_path_by_id_present(self,mocker):
+        mocker.patch('app.adapter.Graph')
+        app.adapter.Graph.return_value.run.return_value = 123
+
+        api = app.adapter.GraphAdapter(None,None,None)
+        result = api.get_path_by_id("123412","128341")
+
+        assert result == 
+
 

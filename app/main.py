@@ -1,5 +1,5 @@
 
-from flask import Flask
+from flask import Flask, request
 from flask_restful import reqparse, abort, Api, Resource, fields, marshal_with
 from app.adapter import GraphAdapter
 import pdb
@@ -26,8 +26,19 @@ class ArtistApi(Resource):
         else:
             return result
 
+class PathApi(Resource):
+    # TODO Figure out how to parse the returned Relationship structure into
+    # some sort of json response
+    def get(self):
+        artist_id_one = request.args['artist_id_one']  
+        artist_id_two = request.args['artist_id_two']
+        pdb.set_trace()
+        result = graph_adapter.get_path_by_id(artist_id_one,artist_id_two)
+
+
 
 api.add_resource(ArtistApi,'/artist/<string:artist_id>')
+api.add_resource(PathApi,'/path/')
 
 
 if __name__ == '__main__':
