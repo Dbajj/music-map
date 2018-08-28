@@ -9,7 +9,7 @@ GRAPH_URI = "bolt://127.0.0.1:7687"
 app = Flask(__name__)
 api = Api(app)
 
-graph_adapter = GraphAdapter(GRAPH_URI,"neo4j","***REMOVED***")
+graph_adapter = GraphAdapter(GRAPH_URI,None,None)
 
 resource_fields = {
     'name': fields.String,

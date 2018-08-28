@@ -45,7 +45,7 @@ CHECKTIMEOUT = 1
 #        container = client.containers.get("neo4j_test")
 #
 #
-#    api = graph_api.GraphAdapter(TEST_URI, "neo4j", "***REMOVED***")
+#    api = graph_api.GraphAdapter(TEST_URI, "neo4j", "Apple-00")
 #    load_test_nodes(api, TESTFILE_URI_NODE)
 #    load_test_relations(api, TESTFILE_URI_RELATION)
 #    yield api
