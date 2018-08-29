@@ -37,6 +37,7 @@ py==1.5.4
 py2neo==4.1.0
 Pygments==2.2.0
 pytest==3.7.2
+pytest-mock==1.10.0
 python-dateutil==2.7.3
 pytz==2018.5
 pyzmq==17.1.2
