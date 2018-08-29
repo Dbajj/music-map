@@ -32,7 +32,9 @@ class GraphAdapter():
             f"\"{artist_id_one}\"}}), (dest:Artist {{ artistId:" \
                 f"\"{artist_id_two}\"}})," \
             "p=shortestPath((source)-[*]-(dest)) return p"
-        path = self._graph.run(path_query_string)
+        path_cursor = self._graph.run(path_query_string)
+        path = path_cursor.evaluate() 
+
         return path
 
 

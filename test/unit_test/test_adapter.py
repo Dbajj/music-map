@@ -49,11 +49,16 @@ class TestGraphAdapter(object):
     # asserts
     def test_get_path_by_id_present(self,mocker):
         mocker.patch('app.adapter.Graph')
-        app.adapter.Graph.return_value.run.return_value = 123
+        cursor_mock = MagicMock()
+        path_mock = MagicMock()
+        app.adapter.Graph.return_value.run.return_value = cursor_mock
+        cursor_mock.evaluate.return_value = path_mock
 
+        
+        
+        pdb.set_trace()
         api = app.adapter.GraphAdapter(None,None,None)
         result = api.get_path_by_id("123412","128341")
 
-        assert result == 
 
 
