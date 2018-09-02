@@ -35,6 +35,19 @@ class GraphAdapter():
         path_cursor = self._graph.run(path_query_string)
         path = path_cursor.evaluate() 
 
+        artist_nodes = []
+        relationships_nodes = []
+
+        toggle = True
+        for element in path.__walk__():
+            if toggle:
+                artist_nodes.append(Artist(element.get('name'),element.get('artistId')))
+            else:
+                relationships_nodes.append(element)
+            toggle = not toggle
+
+        # TODO create a wrapper class for relationships, and then create  path
+        # object using the generated objects, return that
         return path
 
 
