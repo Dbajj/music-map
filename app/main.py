@@ -2,14 +2,19 @@
 from flask import Flask, request
 from flask_restful import reqparse, abort, Api, Resource, fields, marshal_with
 from app.adapter import GraphAdapter
+from configparser import SafeConfigParser
+import os
 import pdb
 
 GRAPH_URI = "bolt://127.0.0.1:7687"
 
 app = Flask(__name__)
 api = Api(app)
+config = SafeConfigParser()
+config.read('conf/settings.cfg')
 
-graph_adapter = GraphAdapter(GRAPH_URI,None,None)
+graph_adapter = \
+GraphAdapter(GRAPH_URI,config.get('neo4j','username'),config.get('neo4j','password'))
 
 resource_fields = {
     'name': fields.String,
@@ -39,6 +44,7 @@ class PathApi(Resource):
 
 api.add_resource(ArtistApi,'/artist/<string:artist_id>')
 api.add_resource(PathApi,'/path/')
+
 
 
 if __name__ == '__main__':
