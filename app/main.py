@@ -10,11 +10,13 @@ GRAPH_URI = "bolt://127.0.0.1:7687"
 
 app = Flask(__name__)
 api = Api(app)
+
 config = SafeConfigParser()
-config.read('conf/settings.cfg')
+assert os.path.exists(os.getcwd() + '/conf/settings.cfg')
+config.read(os.getcwd() + '/conf/settings.cfg')
 
 graph_adapter = \
-GraphAdapter(GRAPH_URI,config.get('neo4j','username'),config.get('neo4j','password'))
+ GraphAdapter(GRAPH_URI,config.get('neo4j','username'),config.get('neo4j','password'))
 
 resource_fields = {
     'name': fields.String,
