@@ -5,6 +5,7 @@ import gzip
 import timeit
 import pdb
 import pickle
+import argparse
 
 
 start = timeit.default_timer()
@@ -137,5 +138,15 @@ def printFile(name):
     for line in gzip_file:
         print(line)
 
-#buildMasterDict()
-parseReleases("./data/discogs_20180701_releases.xml.gz")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description ='Parse discogs xml data \
+            into csv files')
+    parser.add_argument('type',metavar="T",type=str,help='the type of \
+            discogs data to parse (one of \'artist\',\'master\',\'release\')')
+    parser.add_argument('path',metavar="P",type=str,help='the relative path \
+            of the xml file to parse')
+    args = parser.parse_args()
+
+    print(args)
+
+
