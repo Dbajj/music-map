@@ -2,6 +2,8 @@ import csv
 from lxml import etree as ET
 import xml.etree.ElementTree as ETC
 import gzip
+import os
+import sys
 import timeit
 import pdb
 import pickle
@@ -10,9 +12,12 @@ import argparse
 
 start = timeit.default_timer()
 
-def buildMasterDict():
+def buildMasterDict(masterxml_path):
+    print('Building master dictionary')
+    print(masterxml_path)
+    print(os.getcwd())
     release_dict = dict()
-    master_file = open('./data/discogs_20180101_masters.xml','rb')
+    master_file = gzip.open(masterxml_path,'rb')
     elem_num = 0
     cur_elem_num = 0
     for event, elem in ET.iterparse(master_file,events=['end'],tag='master'):
@@ -25,14 +30,20 @@ def buildMasterDict():
         if(cur_elem_num > 10000):
             elem_num += cur_elem_num
             cur_elem_num = 0
-            print(elem_num)
+            sys.stdout.write('\r'+str(elem_num))
+            sys.stdout.flush()
 
+    os.makedirs(os.path.dirname('./obj/release_dict.pkl'),exist_ok=True)
     pickle.dump(release_dict,open('obj/release_dict.pkl','wb'),pickle.HIGHEST_PROTOCOL)
+    print('Done')
 
 
 
-def parseArtist():
-    gzip_file = gzip.open('./data/discogs_20180801_artists.xml.gz','rb')
+def parseArtist(artistxml_path):
+    print('Parsing artists')
+    gzip_file = gzip.open(artistxml_path,'rb')
+
+    os.makedirs(os.path.dirname('./data/csv/artist.csv'),exist_ok=True)
     cur_writer = csv.writer(open('./data/csv/artist.csv', 'w'), dialect='unix',quoting=csv.QUOTE_NONNUMERIC)
     elem_num  = 0
     cur_elem_num = 0
@@ -66,8 +77,11 @@ def parseArtist():
 
 
 def parseReleases(fileName):
+    print('Parsing releases')
     release_dict = pickle.load(open('obj/release_dict.pkl','rb'))
+
     gzip_file = gzip.open(fileName,'rb')
+    os.makedirs(os.path.dirname('./data/csv/release.csv'),exist_ok=True)
     cur_writer = csv.writer(open('./data/csv/release.csv','w'),delimiter=',')
     elem_num = 0
     cur_elem_num = 0
@@ -77,7 +91,7 @@ def parseReleases(fileName):
     for event, elem in ET.iterparse(gzip_file,events=['end'],tag='release'):
         release_id = elem.get('id')
         if (release_id is not None and release_id in release_dict):
-            parseReleaseElemAlt(elem,nodes_tuples,release_dict)
+            parseReleaseElem(elem,nodes_tuples,release_dict)
         cur_elem_num += 1
         elem.clear()
         for ancestor in elem.xpath('ancestor-or-self::*'):
@@ -98,6 +112,7 @@ def parseReleases(fileName):
     cur_writer.writerows(nodes_tuples)
     nodes_tuples.clear()
     del nodes_tuples[:]
+    print('Done')
 
 
 def countReleases():
@@ -105,23 +120,9 @@ def countReleases():
     cur_writer = csv.writer(open('./data/csv/release.csv','w'),delimiter=',')
     tree = ET.parse(gzip_file)
     num_elems = tree.xpath("count(//release)")
+           
 
-master_path = ET.XPath('child::master_id')
-artist_id_path = ET.XPath('artists/artist/id')
-extra_artists_path = ET.XPath('child::extraartists/artist')
-            
-
-def parseReleaseElem(elem,batch):
-    master_id = master_path(elem)[0].text
-    main_artist_id = artist_id_path(elem)[0].text
-    for extra in extra_artists_path(elem):
-        extra_id = extra.find('id').text
-        if (extra.find('role').text == "Featuring" and extra_id != main_artist_id):    
-            batch.append((main_artist_id,master_id,extra_id))
-
-    return
-
-def parseReleaseElemAlt(elem,batch,release_dict):
+def parseReleaseElem(elem,batch,release_dict):
     master_id = release_dict[elem.get('id')]
     main_artist_id = elem.find('artists/artist/id').text
     for extra in elem.findall('.//extraartists/artist'):
@@ -139,14 +140,18 @@ def printFile(name):
         print(line)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description ='Parse discogs xml data \
-            into csv files')
-    parser.add_argument('type',metavar="T",type=str,help='the type of \
-            discogs data to parse (one of \'artist\',\'master\',\'release\')')
-    parser.add_argument('path',metavar="P",type=str,help='the relative path \
-            of the xml file to parse')
-    args = parser.parse_args()
+    parser = argparse.ArgumentParser(description ="""Parse discogs xml data 
+            into csv files""")
+    parser.add_argument('masters_path',metavar="M",type=str,help="""path of masters xml
+            file""")
+    parser.add_argument('artists_path',metavar="A",type=str,help="""path of masters xml
+            file""")
+    parser.add_argument('releases_path',metavar="R",type=str,help="""path of masters xml
+            file""")
 
-    print(args)
+    args = parser.parse_args()
+    buildMasterDict(args.masters_path)
+    parseArtist(args.artists_path)
+    parseReleases(args.releases_path)
 
 
