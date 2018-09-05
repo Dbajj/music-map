@@ -106,6 +106,7 @@ venv.bak/
 # Data files
 data/
 obj/
+*.xml.gz
 
 # Config files
 conf/settings.cfg
