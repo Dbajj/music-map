@@ -104,7 +104,8 @@ venv.bak/
 .mypy_cache/
 
 # Data files
-data/
+data/csv/
+data/xml/
 obj/
 *.xml.gz
 
