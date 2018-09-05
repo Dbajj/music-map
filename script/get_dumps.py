@@ -68,7 +68,7 @@ def download_file(link, output_name):
             sys.stdout.write("\r[%s%s]" % ('=' * done, ' ' * (50 - done)))
             sys.stdout.flush()
             f.write(block)
-        print(f"File saved as \"{output_name}\"")
+        print(f"\nFile saved as \"{output_name}\"")
 
 
 
@@ -105,7 +105,7 @@ download_file(latest,'masters.xml.gz')
 
 # Download latest releases dump
 latest = get_download_link(driver.page_source,'releases')
-print("Downloading masters dump from " + latest)
+print("Downloading releases dump from " + latest)
 download_file(latest,'releases.xml.gz')
 
 
