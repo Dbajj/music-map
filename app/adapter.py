@@ -38,5 +38,4 @@ class GraphAdapter():
 
     # Converts a neo4j relationship data node into a Relationship object
     def generate_relationship(self, relationship_response):
-        pdb.set_trace()
-        x = 5
+        pass
