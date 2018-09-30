@@ -2,28 +2,26 @@
 #
 # These nodes and edges can contain any items
 class Path():
+
+    class Node(object):
+        def __init__(self, value):
+            self.val = value
+
+
     # Starts a path with the given artist as the source
-    def __init__(self, initial_node_obj):
-        self.head = Node(initial_node_obj)
+    def __init__(self, initial_node_val):
+        self.head = self.Node(initial_node_val)
+        self.head.next = None
         self.end = self.head
 
-    def add_node(self, new_edge, new_node):
-        self.end.next = new_edge
-        self.end.next.next = new_node
-        self.end = new_node
-        
+    def add_edge_with_node(self, new_edge_val, new_node_val):
+        self.end.next = self.Node(new_edge_val)
+        self.end.next.next = self.Node(new_node_val)
+        self.end = self.end.next.next
+        self.end.next = None
 
-class Node(object):
-    def __init__(self, objectToAdd):
-        self.val = objectToAdd
-
-
-
-
-        
-
-
-
-
-
-
+    def __iter__(self):
+        iter_node = self.head
+        while iter_node is not None:
+            yield iter_node.val
+            iter_node = iter_node.next
