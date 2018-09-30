@@ -5,7 +5,7 @@ venv/bin/activate: requirements.txt
 	touch venv/bin/activate
 
 run-local: venv
-	export FLASK_app=app/main.py
-	venv/bin/python -m flask run
+	export FLASK_APP=app/main.py; \
+	venv/bin/python -m flask run;
 
 
