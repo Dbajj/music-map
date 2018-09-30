@@ -1,6 +1,7 @@
 from py2neo import Graph, Node, Relationship, NodeMatcher
 from app.model.artist import Artist
 from app.model.path import Path
+import pdb
 
 
 class GraphRepository():
@@ -37,8 +38,9 @@ class GraphRepository():
             f"\"{artist_id_one}\"}}), (dest:Artist {{ artistId:" \
             f"\"{artist_id_two}\"}})," \
             "p=shortestPath((source)-[*]-(dest)) return p"
-        path_response = self._graph.run(path_query_string)
+
+        path_response = self._matcher.graph.run(path_query_string)
 
         # TODO create a wrapper class for relationships, and then create  path
         # object using the generated objects, return that
-        return self._adapter.generate_path(path_response)
+        return self._adapter.generate_relationship_list(path_response)

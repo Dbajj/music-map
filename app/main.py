@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_restful import reqparse, abort, Api, Resource, fields, marshal_with
 from app.adapter import GraphAdapter
 from configparser import SafeConfigParser
-from py2neo import Graph
+from py2neo import Graph, NodeMatcher
 from app.repository import GraphRepository
 import os
 import pdb
@@ -20,7 +20,7 @@ graph_adapter = GraphAdapter()
 graph_dao = Graph(GRAPH_URI,
                   auth=(config.get('neo4j', 'username'),
                         (config.get('neo4j', 'password'))))
-graph_repository = GraphRepository()
+graph_repository = GraphRepository(graph_adapter, NodeMatcher(graph_dao))
 
 # GraphAdapter(GRAPH_URI,config.get('neo4j','username'),config.get('neo4j','password'))
 resource_fields = {
@@ -32,7 +32,7 @@ resource_fields = {
 class ArtistApi(Resource):
     @marshal_with(resource_fields)
     def get(self, artist_id):
-        result = graph_adapter.get_artist_by_id(artist_id)
+        result = graph_repository.get_artist_by_id(artist_id)
         if result is None:
             abort(404, message="Artist id {} doesn't exist".format(artist_id))
         else:
@@ -45,11 +45,11 @@ class PathApi(Resource):
     def get(self):
         artist_id_one = request.args['artist_id_one']
         artist_id_two = request.args['artist_id_two']
-        pdb.set_trace()
+        graph_repository.get_path_by_id(artist_id_one, artist_id_two)
 
 
 api.add_resource(ArtistApi, '/artist/<string:artist_id>')
-api.add_resource(PathApi, '/path/')
+api.add_resource(PathApi, '/path')
 
 
 if __name__ == '__main__':

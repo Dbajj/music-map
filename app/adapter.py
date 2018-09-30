@@ -1,4 +1,6 @@
-from app.entity.artist import Artist, Path
+from app.model.artist import Artist
+from app.model.path import Path
+import py2neo
 import pdb
 
 
@@ -9,28 +11,32 @@ class GraphAdapter():
         pass
 
     def generate_artist(self, artist_response) -> Artist:
-        artist_dict = artist_response.first()
+        if type(artist_response) is py2neo.matching.NodeMatch:
+            artist_dict = artist_response.first()
+        else:
+            artist_dict = artist_response
         return Artist(artist_dict['name'], artist_dict['artistId'])
 
-    def generate_path(self, path_cursor) -> Path:
+    # Converts a list of relationships to a linear path from the given source
+    # name to the given destination name
+    def relationship_list_to_path(self, path, source, dest) -> Path:
+        pass
+
+
+    # Converts a shortestPath neo4j query response into a list of relationships
+    # containing a start node, relation and end node
+    def generate_relationship_list(self, path_cursor) -> list:
         neo_path = path_cursor.evaluate()
+        output_list = []
+
+        for element in neo_path.relationships:
+            cur_relation = self.generate_relationship(element)
+            output_list.append(cur_relation)
+
+        return output_list
+
+
+    # Converts a neo4j relationship data node into a Relationship object
+    def generate_relationship(self, relationship_response):
         pdb.set_trace()
-
-        artist_nodes = []
-        relationships_nodes = []
-
-        toggle = True
-        for element in path.__walk__():
-            if toggle:
-                artist_nodes.append(Artist(element.get('name'),element.get('artistId')))
-            else:
-                relationships_nodes.append(element)
-            toggle = not toggle
-
-        # TODO create a wrapper class for relationships, and then create  path
-        # object using the generated objects, return that
-        return path
-
-
-
-
+        x = 5
