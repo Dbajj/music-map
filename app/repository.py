@@ -1,11 +1,12 @@
 from py2neo import Graph, Node, Relationship, NodeMatcher
-from app.model import Artist, Path
+from app.model.artist import Artist
+from app.model.path import Path
 
 
 class GraphRepository():
-    def __init__(self, graph_adapter, graph_dao):
+    def __init__(self, graph_adapter, graph_matcher):
         self._adapter = graph_adapter
-        self._matcher = NodeMatcher(graph_dao)
+        self._matcher = graph_matcher
 
     def get_artist_by_id(self, artist_id: str) -> Artist:
         """get_artist_by_id
@@ -15,8 +16,7 @@ class GraphRepository():
         :rtype: Artist
         """
 
-        artist_response = self._matcher.match("Artist", artistId=artist_id) \
-            .first()
+        artist_response = self._matcher.match("Artist", artistId=artist_id)
 
         if artist_response is None:
             return None

@@ -9,7 +9,8 @@ class GraphAdapter():
         pass
 
     def generate_artist(self, artist_response) -> Artist:
-        return Artist(artist_response['name'], artist_response['artistId'])
+        artist_dict = artist_response.first()
+        return Artist(artist_dict['name'], artist_dict['artistId'])
 
     def generate_path(self, path_cursor) -> Path:
         neo_path = path_cursor.evaluate()
