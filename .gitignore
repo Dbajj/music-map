@@ -112,3 +112,6 @@ obj/
 # Config files
 conf/settings.cfg
 
+# CTags
+tags
+
