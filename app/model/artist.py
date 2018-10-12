@@ -7,5 +7,5 @@ class Artist():
     def __eq__(self, other):
         return self.name == other.name and self.id == other.id
 
-
-
+    def __str__(self):
+        return f"{self.name}"

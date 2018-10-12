@@ -3,8 +3,13 @@
 #
 # The relationship is defined as FROM start TO end
 # eg: A FEATURES B
+
+
 class Relationship(object):
     def __init__(self, start, end, connection):
         self.start = start
         self.end = end
         self.connection = connection
+
+    def __str__(self):
+        return f"{self.start} -> {self.connection} -> {self.end}"
