@@ -1,5 +1,7 @@
 from app.model.artist import Artist
 from app.model.path import Path
+from app.model.relationship import Relationship
+from app.model.connection import Connection
 import py2neo
 import pdb
 
@@ -22,7 +24,6 @@ class GraphAdapter():
     def relationship_list_to_path(self, path, source, dest) -> Path:
         pass
 
-
     # Converts a shortestPath neo4j query response into a list of relationships
     # containing a start node, relation and end node
     def generate_relationship_list(self, path_cursor) -> list:
@@ -35,7 +36,19 @@ class GraphAdapter():
 
         return output_list
 
-
     # Converts a neo4j relationship data node into a Relationship object
-    def generate_relationship(self, relationship_response):
-        pass
+    def generate_relationship(self, relationship_response) -> Relationship:
+        start_node = self.generate_artist(relationship_response.start_node)
+        end_node = self.generate_artist(relationship_response.end_node)
+
+        connection_type = list(relationship_response.types())
+        connection_extras = dict(zip(relationship_response.keys(),
+                                     relationship_response.values()))
+
+        if len(connection_type) != 1:
+            raise ValueError("Expected only one connection type from neo4j \
+                    relationship response")
+        else:
+            return Relationship(start_node, end_node,
+                                Connection(connection_type[0],
+                                           connection_extras))

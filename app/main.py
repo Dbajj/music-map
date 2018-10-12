@@ -45,7 +45,7 @@ class PathApi(Resource):
     def get(self):
         artist_id_one = request.args['artist_id_one']
         artist_id_two = request.args['artist_id_two']
-        graph_repository.get_path_by_id(artist_id_one, artist_id_two)
+        result = graph_repository.get_path_by_id(artist_id_one, artist_id_two)
 
 
 api.add_resource(ArtistApi, '/artist/<string:artist_id>')
