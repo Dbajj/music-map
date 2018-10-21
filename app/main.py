@@ -29,12 +29,23 @@ resource_fields = {
 }
 
 
-class ArtistApi(Resource):
+class ArtistIdApi(Resource):
     @marshal_with(resource_fields)
     def get(self, artist_id):
-        result = graph_repository.get_artist_by_id(artist_id)
+        result = graph_repository.get_artist_by_id(str(artist_id))
         if result is None:
             abort(404, message="Artist id {} doesn't exist".format(artist_id))
+        else:
+            return result
+
+
+class ArtistNameApi(Resource):
+    @marshal_with(resource_fields)
+    def get(self, artist_name):
+        result = graph_repository.get_artist_by_name(artist_name)
+        if result is None:
+            abort(404, message="Artist name {} doesn't \
+                    exist".format(artist_name))
         else:
             return result
 
@@ -48,7 +59,8 @@ class PathApi(Resource):
         result = graph_repository.get_path_by_id(artist_id_one, artist_id_two)
 
 
-api.add_resource(ArtistApi, '/artist/<string:artist_id>')
+api.add_resource(ArtistIdApi, '/artist/<int:artist_id>')
+api.add_resource(ArtistNameApi, '/artist/<string:artist_name>')
 api.add_resource(PathApi, '/path')
 
 

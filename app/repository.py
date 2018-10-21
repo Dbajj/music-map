@@ -1,11 +1,12 @@
 from py2neo import Graph, Node, Relationship, NodeMatcher
 from app.model.artist import Artist
 from app.model.path import Path
+from app.adapter import GraphAdapter
 import pdb
 
 
 class GraphRepository():
-    def __init__(self, graph_adapter, graph_matcher):
+    def __init__(self, graph_adapter: GraphAdapter, graph_matcher: NodeMatcher):
         self._adapter = graph_adapter
         self._matcher = graph_matcher
 
@@ -18,6 +19,21 @@ class GraphRepository():
         """
 
         artist_response = self._matcher.match("Artist", artistId=artist_id)
+
+        if artist_response is None:
+            return None
+        else:
+            return self._adapter.generate_artist(artist_response)
+
+    def get_artist_by_name(self, artist_name: str) -> Artist:
+        """get_artist_by_name
+
+        :param artist_name: name of the artist to search up
+        :type artist_name: str
+        :rtype: Artist
+        """
+
+        artist_response = self._matcher.match("Artist", name=artist_name)
 
         if artist_response is None:
             return None

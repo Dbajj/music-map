@@ -7,7 +7,6 @@ class Path():
         def __init__(self, value):
             self.val = value
 
-
     # Starts a path with the given artist as the source
     def __init__(self, initial_node_val):
         self.head = self.Node(initial_node_val)

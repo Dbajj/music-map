@@ -2,6 +2,7 @@ from app.model.artist import Artist
 from app.model.path import Path
 from app.model.relationship import Relationship
 from app.model.connection import Connection
+from functools import reduce
 import py2neo
 import pdb
 
@@ -17,17 +18,26 @@ class GraphAdapter():
             artist_dict = artist_response.first()
         else:
             artist_dict = artist_response
+
+        if artist_dict is None:
+            return None
+
         return Artist(artist_dict['name'], artist_dict['artistId'])
 
     # Converts a list of relationships to a linear path from the given source
     # name to the given destination name
-    def relationship_list_to_path(self, path, source, dest) -> Path:
+    #
+    # Assumes relationships are sorted in the desired order
+    def relationship_list_to_path(self, rel_list: list, source, dest) -> Path:
+        def combine_pair(rsf, second):
+            pass
         pass
 
     # Converts a shortestPath neo4j query response into a list of relationships
     # containing a start node, relation and end node
     def generate_relationship_list(self, path_cursor) -> list:
         neo_path = path_cursor.evaluate()
+        pdb.set_trace
         output_list = []
 
         for element in neo_path.relationships:
