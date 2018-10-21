@@ -24,27 +24,40 @@ class GraphAdapter():
 
         return Artist(artist_dict['name'], artist_dict['artistId'])
 
-    # Converts a list of relationships to a linear path from the given source
-    # name to the given destination name
+    # Converts a list of relationships to have a consistent directionality
     #
     # Assumes relationships are sorted in the desired order
-    def relationship_list_to_path(self, rel_list: list, source, dest) -> Path:
-        def combine_pair(rsf, second):
-            pass
-        pass
+    def align_relationship_list(self, rel_list: list, source, dest) -> Path:
+        cur = source
+        for rel in rel_list:
+            if rel.start != cur:
+                temp = rel.end
+                rel.end = rel.start
+                rel.start = temp
+                rel.connection.extras['forward'] = False
+            else:
+                rel.connection.extras['forward'] = True
+
+            cur = rel.end
+
+        return rel_list
 
     # Converts a shortestPath neo4j query response into a list of relationships
     # containing a start node, relation and end node
     def generate_relationship_list(self, path_cursor) -> list:
         neo_path = path_cursor.evaluate()
-        pdb.set_trace
         output_list = []
 
         for element in neo_path.relationships:
             cur_relation = self.generate_relationship(element)
             output_list.append(cur_relation)
 
-        return output_list
+        artist_start = self.generate_artist(neo_path.start_node)
+        artist_end = self.generate_artist(neo_path.end_node)
+
+        return self.align_relationship_list(output_list,
+                                            artist_start,
+                                            artist_end)
 
     # Converts a neo4j relationship data node into a Relationship object
     def generate_relationship(self, relationship_response) -> Relationship:

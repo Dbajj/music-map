@@ -13,3 +13,4 @@ class Relationship(object):
 
     def __str__(self):
         return f"{self.start} -> {self.connection} -> {self.end}"
+
