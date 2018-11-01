@@ -5,7 +5,7 @@ from configparser import SafeConfigParser
 from py2neo import Graph, NodeMatcher
 from app.repository import GraphRepository
 from json import JSONEncoder
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 import os
 import pdb
 
