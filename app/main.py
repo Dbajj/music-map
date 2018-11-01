@@ -5,13 +5,17 @@ from configparser import SafeConfigParser
 from py2neo import Graph, NodeMatcher
 from app.repository import GraphRepository
 from json import JSONEncoder
+from flask_cors import CORS, cross_origin
 import os
 import pdb
 
 GRAPH_URI = "bolt://104.248.220.9:7687"
 
 app = Flask(__name__)
+cors = CORS(app)
 api = Api(app)
+# Allow POST requests with JSON
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 config = SafeConfigParser()
 assert os.path.exists(os.getcwd() + '/conf/settings.cfg')
@@ -79,6 +83,3 @@ api.add_resource(PathApi, '/path')
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
