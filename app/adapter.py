@@ -56,6 +56,15 @@ class GraphAdapter():
 
         return rel_list
 
+    def generate_artists_list(self, artists_response) -> Artist:
+        print(artists_response)
+        # artist_dict = artists_response
+        # return Artist(artist_dict['name'], artist_dict['artistId'])
+
+    # Converts a list of relationships to a linear path from the given source
+    # name to the given destination name
+    def relationship_list_to_path(self, path, source, dest) -> Path:
+        pass
     # Converts a shortestPath neo4j query response into a list of relationships
     # containing a start node, relation and end node
     def generate_relationship_list(self, path_cursor) -> list:

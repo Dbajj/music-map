@@ -31,16 +31,20 @@ graph_repository = GraphRepository(graph_adapter,
                                    NodeMatcher(graph_dao),
                                    RelationshipMatcher(graph_dao))
 
+# GraphAdapter(GRAPH_URI,config.get('neo4j','username'),config.get('neo4j','password'))
 class PathEncoder(JSONEncoder):
     def default(self, o):
         return o.__dict__
 
 
 app.json_encoder = PathEncoder
+artist_fields = {
+    'name': fields.String,
+    'id': fields.String
+}
 
-
-class ArtistIdApi(Resource):
-    @marshal_with(Artist.fields)
+class ArtistsIdApi(Resource):
+    @marshal_with(artist_fields)
     def get(self, artist_id):
         result = graph_repository.get_artist_by_id(str(artist_id))
         if result is None:
@@ -48,7 +52,19 @@ class ArtistIdApi(Resource):
         else:
             return result
 
-class ArtistNameApi(Resource):
+# Find list of artists matching partial string of typed name
+# Used for auto-complete on front-end
+class ArtistsSearchApi(Resource):
+    @marshal_with(Artist.fields)
+    def get(self, querystring):
+        result = graph_repository.get_artists_by_string(querystring)
+        if result is None:
+            abort(404, message="No artist found that matches {}".format(querystring))
+        else:
+            return result
+
+# Find artist by name
+class ArtistsNameApi(Resource):
     @marshal_with(Artist.fields)
     def get(self, artist_name):
         result = graph_repository.get_artist_by_name(artist_name)
@@ -62,9 +78,7 @@ class PathApi(Resource):
     def get(self):
         artist_id_one = request.args['artist_id_one']
         artist_id_two = request.args['artist_id_two']
-
         output = graph_repository.get_path_by_id(artist_id_one, artist_id_two)
-
         return jsonify(output)
 
 class ReleaseApi(Resource):
@@ -77,11 +91,11 @@ class ReleaseApi(Resource):
         else:
             return result
 
-api.add_resource(ArtistIdApi, '/artist/<int:artist_id>')
-api.add_resource(ArtistNameApi, '/artist/<string:artist_name>')
+api.add_resource(ArtistIdApi, '/artists/<int:artist_id>')
+api.add_resource(ArtistNameApi, '/artists/<string:artist_name>')
+api.add_resource(ArtistSearchApi, '/artists/<string:querystring>')
 api.add_resource(PathApi, '/path')
 api.add_resource(ReleaseApi, '/release/<int:release_id>')
-
 
 if __name__ == '__main__':
     app.run(debug=True)
