@@ -115,3 +115,5 @@ conf/settings.cfg
 # CTags
 tags
 
+.vscode/
+

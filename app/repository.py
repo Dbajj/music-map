@@ -50,12 +50,14 @@ class GraphRepository():
         :rtype: Path
         """
 
-        path_query_string = f"match(source:Artist {{ artistId:" \
-            f"\"{artist_id_one}\"}}), (dest:Artist {{ artistId:" \
-            f"\"{artist_id_two}\"}})," \
+        path_query_string = "match(source:Artist { artistId:" \
+            "{artist_id_one} }), (dest:Artist { artistId:" \
+            "{artist_id_two} })," \
             "p=shortestPath((source)-[*]-(dest)) return p"
 
-        path_response = self._matcher.graph.run(path_query_string)
+        path_response = self._matcher.graph.run(path_query_string,
+                                                artist_id_one=artist_id_one,
+                                                artist_id_two=artist_id_two)
 
         # TODO create a wrapper class for relationships, and then create  path
         # object using the generated objects, return that
