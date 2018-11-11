@@ -72,7 +72,7 @@ class GraphRepository():
         """
         release_response = self._matcher.match("Release", releaseId=release_id)
 
-        if artist_response is None:
+        if release_response is None:
             return None
-        else
+        else:
             return self._adapter.generate_release(release_response)
