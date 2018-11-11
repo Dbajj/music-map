@@ -27,10 +27,15 @@ graph_dao = Graph(GRAPH_URI,
                         (config.get('neo4j', 'password'))))
 graph_repository = GraphRepository(graph_adapter, NodeMatcher(graph_dao))
 
-# GraphAdapter(GRAPH_URI,config.get('neo4j','username'),config.get('neo4j','password'))
 artist_fields = {
     'name': fields.String,
     'id': fields.String
+}
+
+release_fields = {
+    'id': fields.String,
+    'title': fields.String,
+    'year': fields.String
 }
 
 
@@ -64,8 +69,6 @@ class ArtistNameApi(Resource):
 
 
 class PathApi(Resource):
-    # TODO Figure out how to parse the returned Relationship structure into
-    # some sort of json response
     def get(self):
         artist_id_one = request.args['artist_id_one']
         artist_id_two = request.args['artist_id_two']
@@ -74,11 +77,23 @@ class PathApi(Resource):
 
         return jsonify(output)
 
+class ReleaseApi(Resource):
+    @marshal_with(release_fields)
+    def get(self, release_id: int):
+        result = graph_repository.get_release_by_id(str(release_id))
+        if result is None:
+            abort(404, message="Release id {} doesn't \
+                    exist".format(release_id))
+        else:
+            return result
+
+
 
 
 api.add_resource(ArtistIdApi, '/artist/<int:artist_id>')
 api.add_resource(ArtistNameApi, '/artist/<string:artist_name>')
 api.add_resource(PathApi, '/path')
+api.add_resource(ReleaseApi, '/release/<int:release_id>')
 
 
 if __name__ == '__main__':

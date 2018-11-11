@@ -1,4 +1,5 @@
 from app.model.artist import Artist
+from app.model.release import Release
 from app.model.path import Path
 from app.model.relationship import Relationship
 from app.model.connection import Connection
@@ -23,6 +24,19 @@ class GraphAdapter():
             return None
 
         return Artist(artist_dict['name'], artist_dict['artistId'])
+
+    def generate_release(self, release_response) -> Release:
+        if type(release_response) is py2neo.matching.NodeMatch:
+            release_dict = release_response.first()
+        else:
+            release_dict = release_response
+        
+        if release_dict is None:
+            return None
+        
+        return Release(release_dict['id'], release_dict['title'], release_dict['year'])
+
+
 
     # Converts a list of relationships to have a consistent directionality
     #
