@@ -1,6 +1,7 @@
 from py2neo import Graph, Node, Relationship, NodeMatcher
 from app.model.artist import Artist
 from app.model.path import Path
+from app.model.release import Release
 from app.adapter import GraphAdapter
 import pdb
 
@@ -59,6 +60,19 @@ class GraphRepository():
                                                 artist_id_one=artist_id_one,
                                                 artist_id_two=artist_id_two)
 
-        # TODO create a wrapper class for relationships, and then create  path
-        # object using the generated objects, return that
         return self._adapter.generate_relationship_list(path_response)
+
+    def get_release_by_id(self, release_id: str) -> Release:
+        """get_release_by_id
+        
+        :param release_id: The id of the release to be retrieved
+        :type release_id: str
+        :return: The release object represented by release_id
+        :rtype: Release
+        """
+        release_response = self._matcher.match("Release", releaseId=release_id)
+
+        if artist_response is None:
+            return None
+        else
+            return self._adapter.generate_release(release_response)
