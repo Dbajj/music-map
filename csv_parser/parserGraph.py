@@ -137,7 +137,7 @@ def parseReleaseElem(elem,batch,release_dict):
     for extra in elem.findall('.//extraartists/artist'):
         extra_id = extra.find('id').text
         if (extra.find('role').text == "Featuring" and extra_id != main_artist_id):    
-            batch.append((main_artist_id,master_id,title,year,extra_id))
+            batch.append((main_artist_id,master_id,title,year,extra_id, ":FEATURED"))
     return
 
 
@@ -159,8 +159,8 @@ if __name__ == "__main__":
             file""")
 
     args = parser.parse_args()
-#    buildMasterDict(args.masters_path)
-#    parseArtist(args.artists_path)
+    buildMasterDict(args.masters_path)
+    parseArtist(args.artists_path)
     parseReleases(args.releases_path)
 
 
