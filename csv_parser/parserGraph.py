@@ -120,15 +120,24 @@ def countReleases():
     cur_writer = csv.writer(open('./data/csv/release.csv','w'),delimiter=',')
     tree = ET.parse(gzip_file)
     num_elems = tree.xpath("count(//release)")
-           
+
+def getElemText(elem, find_string):
+    find_elem = elem.find(find_string)
+
+    if find_elem is not None:
+        return find_elem.text
+    else:
+        return None
 
 def parseReleaseElem(elem,batch,release_dict):
     master_id = release_dict[elem.get('id')]
-    main_artist_id = elem.find('artists/artist/id').text
+    main_artist_id = getElemText(elem, 'artists/artist/id')
+    title = getElemText(elem, 'title')
+    year = getElemText(elem, 'released')
     for extra in elem.findall('.//extraartists/artist'):
         extra_id = extra.find('id').text
         if (extra.find('role').text == "Featuring" and extra_id != main_artist_id):    
-            batch.append((main_artist_id,master_id,extra_id))
+            batch.append((main_artist_id,master_id,title,year,extra_id))
     return
 
 
@@ -150,8 +159,8 @@ if __name__ == "__main__":
             file""")
 
     args = parser.parse_args()
-    buildMasterDict(args.masters_path)
-    parseArtist(args.artists_path)
+#    buildMasterDict(args.masters_path)
+#    parseArtist(args.artists_path)
     parseReleases(args.releases_path)
 
 
