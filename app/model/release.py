@@ -1,4 +1,5 @@
 from app.model.artist import Artist
+from flask_restful import fields
 
 class Release():
     def __init__(self, id: str, title: str, year: str, author: Artist = None):
@@ -12,3 +13,9 @@ class Release():
 
     def __str__(self):
         return f"{self.id}-{self.title}-{self.year}"
+
+    fields = {
+        'id': fields.String,
+        'title': fields.String,
+        'year': fields.String
+    }

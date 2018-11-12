@@ -1,3 +1,4 @@
+from flask_restful import fields
 
 class Artist():
     def __init__(self, name, artist_id):
@@ -9,3 +10,8 @@ class Artist():
 
     def __str__(self):
         return f"{self.name}"
+
+    fields = {
+        'name': fields.String,
+        'id': fields.String
+    }

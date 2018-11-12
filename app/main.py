@@ -4,6 +4,8 @@ from app.adapter import GraphAdapter
 from configparser import SafeConfigParser
 from py2neo import Graph, NodeMatcher
 from app.repository import GraphRepository
+from app.model.artist import Artist
+from app.model.release import Release
 from json import JSONEncoder
 from flask_cors import CORS
 import os
@@ -27,18 +29,6 @@ graph_dao = Graph(GRAPH_URI,
                         (config.get('neo4j', 'password'))))
 graph_repository = GraphRepository(graph_adapter, NodeMatcher(graph_dao))
 
-artist_fields = {
-    'name': fields.String,
-    'id': fields.String
-}
-
-release_fields = {
-    'id': fields.String,
-    'title': fields.String,
-    'year': fields.String
-}
-
-
 class PathEncoder(JSONEncoder):
     def default(self, o):
         return o.__dict__
@@ -48,7 +38,7 @@ app.json_encoder = PathEncoder
 
 
 class ArtistIdApi(Resource):
-    @marshal_with(artist_fields)
+    @marshal_with(Artist.fields)
     def get(self, artist_id):
         result = graph_repository.get_artist_by_id(str(artist_id))
         if result is None:
@@ -56,9 +46,8 @@ class ArtistIdApi(Resource):
         else:
             return result
 
-
 class ArtistNameApi(Resource):
-    @marshal_with(artist_fields)
+    @marshal_with(Artist.fields)
     def get(self, artist_name):
         result = graph_repository.get_artist_by_name(artist_name)
         if result is None:
@@ -66,7 +55,6 @@ class ArtistNameApi(Resource):
                     exist".format(artist_name))
         else:
             return result
-
 
 class PathApi(Resource):
     def get(self):
@@ -78,7 +66,7 @@ class PathApi(Resource):
         return jsonify(output)
 
 class ReleaseApi(Resource):
-    @marshal_with(release_fields)
+    @marshal_with(Release.fields)
     def get(self, release_id: int):
         result = graph_repository.get_release_by_id(str(release_id))
         if result is None:
@@ -86,9 +74,6 @@ class ReleaseApi(Resource):
                     exist".format(release_id))
         else:
             return result
-
-
-
 
 api.add_resource(ArtistIdApi, '/artist/<int:artist_id>')
 api.add_resource(ArtistNameApi, '/artist/<string:artist_name>')
