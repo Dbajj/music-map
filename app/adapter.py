@@ -26,15 +26,15 @@ class GraphAdapter():
         return Artist(artist_dict['name'], artist_dict['artistId'])
 
     def generate_release(self, release_response) -> Release:
-        if type(release_response) is py2neo.matching.NodeMatch:
+        if type(release_response) is py2neo.matching.RelationshipMatch:
             release_dict = release_response.first()
         else:
             release_dict = release_response
         
         if release_dict is None:
             return None
-        
-        return Release(release_dict['id'], release_dict['title'], release_dict['year'])
+
+        return Release(release_dict['masterId'], release_dict['title'], release_dict['year'])
 
 
 

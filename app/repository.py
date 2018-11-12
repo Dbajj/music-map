@@ -1,4 +1,4 @@
-from py2neo import Graph, Node, Relationship, NodeMatcher
+from py2neo import Graph, Node, Relationship, NodeMatcher, RelationshipMatcher
 from app.model.artist import Artist
 from app.model.path import Path
 from app.model.release import Release
@@ -7,9 +7,10 @@ import pdb
 
 
 class GraphRepository():
-    def __init__(self, graph_adapter: GraphAdapter, graph_matcher: NodeMatcher):
+    def __init__(self, graph_adapter: GraphAdapter, node_matcher: NodeMatcher, rel_matcher: RelationshipMatcher):
         self._adapter = graph_adapter
-        self._matcher = graph_matcher
+        self._node_matcher = node_matcher
+        self._rel_matcher = rel_matcher
 
     def get_artist_by_id(self, artist_id: str) -> Artist:
         """get_artist_by_id
@@ -19,7 +20,7 @@ class GraphRepository():
         :rtype: Artist
         """
 
-        artist_response = self._matcher.match("Artist", artistId=artist_id)
+        artist_response = self._node_matcher.match("Artist", artistId=artist_id)
 
         if artist_response is None:
             return None
@@ -34,7 +35,7 @@ class GraphRepository():
         :rtype: Artist
         """
 
-        artist_response = self._matcher.match("Artist", name=artist_name)
+        artist_response = self._node_matcher.match("Artist", name=artist_name)
 
         if artist_response is None:
             return None
@@ -56,7 +57,7 @@ class GraphRepository():
             "{artist_id_two} })," \
             "p=shortestPath((source)-[*]-(dest)) return p"
 
-        path_response = self._matcher.graph.run(path_query_string,
+        path_response = self._node_matcher.graph.run(path_query_string,
                                                 artist_id_one=artist_id_one,
                                                 artist_id_two=artist_id_two)
 
@@ -70,7 +71,7 @@ class GraphRepository():
         :return: The release object represented by release_id
         :rtype: Release
         """
-        release_response = self._matcher.match("Release", releaseId=release_id)
+        release_response = self._rel_matcher.match(masterId=release_id)
 
         if release_response is None:
             return None

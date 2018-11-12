@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_restful import reqparse, abort, Api, Resource, fields, marshal_with
 from app.adapter import GraphAdapter
 from configparser import SafeConfigParser
-from py2neo import Graph, NodeMatcher
+from py2neo import Graph, NodeMatcher, RelationshipMatcher
 from app.repository import GraphRepository
 from app.model.artist import Artist
 from app.model.release import Release
@@ -27,7 +27,9 @@ graph_adapter = GraphAdapter()
 graph_dao = Graph(GRAPH_URI,
                   auth=(config.get('neo4j', 'username'),
                         (config.get('neo4j', 'password'))))
-graph_repository = GraphRepository(graph_adapter, NodeMatcher(graph_dao))
+graph_repository = GraphRepository(graph_adapter,
+                                   NodeMatcher(graph_dao),
+                                   RelationshipMatcher(graph_dao))
 
 class PathEncoder(JSONEncoder):
     def default(self, o):
