@@ -42,6 +42,37 @@ class GraphRepository():
         else:
             return self._adapter.generate_artist(artist_response)
 
+    def get_artist_by_name(self, artist_name: str) -> Artist:
+        """get_artist_by_name
+
+        :param artist_name: name of the artist to search up
+        :type artist_name: str
+        :rtype: Artist
+        """
+
+        artist_response = self._node_matcher.match("Artist", name=artist_name)
+        if artist_response is None:
+            return None
+        else:
+            return self._adapter.generate_artist(artist_response)
+
+    # Used for auto-complete feature
+    def get_artists_by_string(self, querystring: str) -> Artist:
+        """get_artists_by_string
+
+        returns the first 5 artists matching the querystring
+
+        :param querystring: the string to match on database search
+        :type querystring: str
+        :rtype: List of Artist
+        """
+
+        search_response = self._node_matcher.match("Artist", name__startswith=querystring).limit(5).order_by("_.name")
+        if search_response is None:
+            return None
+        else:
+            return [self._adapter.generate_artist(x) for x in search_response]
+
     def get_path_by_id(self, artist_id_one: str, artist_id_two: str) -> Path:
         """get_path_by_id
 
@@ -65,7 +96,7 @@ class GraphRepository():
 
     def get_release_by_id(self, release_id: str) -> Release:
         """get_release_by_id
-        
+
         :param release_id: The id of the release to be retrieved
         :type release_id: str
         :return: The release object represented by release_id
