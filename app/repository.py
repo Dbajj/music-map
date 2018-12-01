@@ -57,6 +57,7 @@ class GraphRepository():
         else:
             return self._adapter.generate_artist(artist_response)
 
+    # Used for auto-complete feature
     def get_artists_by_string(self, querystring: str) -> Artist:
         """get_artists_by_string
 

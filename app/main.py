@@ -91,9 +91,9 @@ class ReleaseApi(Resource):
         else:
             return result
 
-api.add_resource(ArtistIdApi, '/artists/<int:artist_id>')
-api.add_resource(ArtistNameApi, '/artists/<string:artist_name>')
-api.add_resource(ArtistSearchApi, '/artists/<string:querystring>')
+api.add_resource(ArtistsIdApi, '/artists/<int:artist_id>')
+api.add_resource(ArtistsNameApi, '/artists/<string:artist_name>')
+api.add_resource(ArtistsSearchApi, '/artists/<string:querystring>')
 api.add_resource(PathApi, '/path')
 api.add_resource(ReleaseApi, '/release/<int:release_id>')
 
