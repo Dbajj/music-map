@@ -67,16 +67,11 @@ class GraphRepository():
         :rtype: List of Artist
         """
 
-        artists_response = self._matcher.match("Artist").where("_.name =~ '{querystring}*'").order_by("_.name").limit(5)
-        print("REPOSITORY TIME")
-        print(artists_response)
-        pdb.set_trace()
-        if artists_response is None:
+        search_response = self._node_matcher.match("Artist", name__startswith=querystring).limit(5).order_by("_.name")
+        if search_response is None:
             return None
         else:
-            #TODO ITERATE THROUGH THE ARTISTS RESPONSE
-            #see neo4j docs for iter()
-            return self._adapter.generate_artists_list(artists_response)
+            return [self._adapter.generate_artist(x) for x in search_response]
 
     def get_path_by_id(self, artist_id_one: str, artist_id_two: str) -> Path:
         """get_path_by_id
