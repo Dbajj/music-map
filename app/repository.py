@@ -50,8 +50,7 @@ class GraphRepository():
         :rtype: Artist
         """
 
-        artist_response = self._matcher.match("Artist", name=artist_name)
-
+        artist_response = self._node_matcher.match("Artist", name=artist_name)
         if artist_response is None:
             return None
         else:
@@ -102,7 +101,7 @@ class GraphRepository():
 
     def get_release_by_id(self, release_id: str) -> Release:
         """get_release_by_id
-        
+
         :param release_id: The id of the release to be retrieved
         :type release_id: str
         :return: The release object represented by release_id
